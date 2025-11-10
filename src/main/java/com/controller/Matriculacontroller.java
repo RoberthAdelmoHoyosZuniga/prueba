@@ -1,6 +1,6 @@
 package com.edu.pe.controller;
 
-
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,4 +86,25 @@ public class MatriculaController {
 		}
 	}
 	
+	@PostMapping("/create")
+	public ResponseEntity<?> create(@RequestBody MatriculaDTO request) {
+		Map<String, Object> salida = new HashMap<String, Object>();
+		try {
+			logger.info("POST[Request] create {} ", request);
+			
+			ModelMapper m = new ModelMapper();
+			MatriculaModel obj = m.map(request, MatriculaModel.class);
+			obj.setFechaMatr(new Date());
+			salida.put("msg", prop.MSG_EXITO_GUARDAR);
+			salida.put("data", matriculaService.add(obj));
+			
+		 //   messageEvent.sendMatriculaEvent(obj);      
+			return ResponseEntity.status(HttpStatus.OK).body(salida);
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			salida.put("msg", ex.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(salida);
+		}
+	}
+
 }
